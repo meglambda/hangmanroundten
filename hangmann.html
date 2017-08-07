@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Megan</title>
+	<link rel="stylesheet" type="text/css" href="style.css">
+
+
+</head>
+<body>
+
+	<div class = "wrapper"> 
+		<div id="title">Chemistry Themed Element Hangman</div>
+		<div id="instructions">Press a key to guess a key</div>
+		<div id="currentWord"></div>
+		<div id="NumberGuessesRemain"></div>
+		
+		<!-- <div id="currentPartialWord" class="spaced"></div> -->
+		<div id="letterGuessed"></div>
+		
+	</div>	
+
+
+	<script type="text/javascript">
+
+		var potentialWords = [
+			"element", 
+			"molecule", 
+			"reaction", 
+			"lead", 
+			"combustion", 
+			"flammable"
+		];
+		var currentWord = ""; 
+		var emptyArray = []; //only correct guesses will be in here (converting underscore)
+		var lettersGuessed = [];
+		var remainingGuesses = 10;
+		var winLoseStatus = ""; // strings ex. "won", "lost", "inplay"
+		//I have tried to figure this out and I can't seem to alert when I have won :(
+		// 
+		// var youLose;
+
+	 	function setupPlayGame(potentialWords) {
+
+	 		currentWord = potentialWords[Math.floor(Math.random() * potentialWords.length)];
+	 		console.log(currentWord);
+
+	 		for (var i=0; i < currentWord.length; i++) {
+	 			emptyArray[i] = "_";
+	 		}
+	 		// 
+	 		//          so you can reset the game programmatically if you want
+	 		lettersGuessed = [];
+	 		remainingGuesses = 10;
+		 	winLoseStatus = "inplay";
+	 	}
+
+		function validLetterGuessed(keyPressed) {
+
+			if(event.keyCode >= 65 && event.keyCode <= 90) {
+				return true;
+			}
+		}
+
+		setupPlayGame(potentialWords);
+
+		document.onkeyup = function(event) {
+
+			var keyPressed = event.key;
+			console.log(keyPressed);
+
+			if (validLetterGuessed(keyPressed) && lettersGuessed.includes(keyPressed) === false) {
+
+				lettersGuessed.push(keyPressed);
+				console.log("good letter") 
+
+				var letterIsInWord = false;
+
+				for (var i=0; i < currentWord.length; i++){
+
+					if (currentWord[i] === keyPressed) {
+						emptyArray[i] = keyPressed;
+						letterIsInWord = true;
+					}
+				}
+				
+				// Partha - I moved these
+				document.getElementById("currentWord").innerHTML = "Current Word: " + emptyArray;
+				console.log(emptyArray);
+
+				if (letterIsInWord === false) {
+					remainingGuesses --;
+
+					document.getElementById("NumberGuessesRemain").innerHTML = "Number of Guesses remaining: " + remainingGuesses; 
+					document.getElementById("letterGuessed").innerHTML = "Incorrect Letters: " + lettersGuessed;
+				}
+
+				// Partha - I added some of this
+				if (emptyArray.includes("_") === false) {
+					winLoseStatus = "won";
+					alert("You've Won!!!");
+				}
+				else if (remainingGuesses === 0) { 
+					winLoseStatus = "lost";
+					alert("You lost. Boo hoo");
+				}
+				// Partha - I added this
+				if (winLoseStatus === "won" || winLoseStatus === "lost") {
+					if (confirm("Would you like to play again?") === true) {
+						setupPlayGame(potentialWords);
+					}
+				}
+			}
+		}
+
+	</script>
+	
+</body>
+</html>
